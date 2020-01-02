@@ -164,8 +164,7 @@ def index_csv_file_bulk(file_path, es_api, index_name, doc_type):
     print("index_csv_file_bulk")
     with open(file_path) as f:
         reader = csv.DictReader(f)
-        helpers.bulk(es_api, reader, index=index_name, doc_type=doc_type)
-
+        helpers.bulk(es_api, reader, index=index_name, doc_type=doc_type, raise_on_error=False)
 
 def replace_all(text, dict):
     for emoticon_text, emoticon in dict.items():
@@ -175,20 +174,36 @@ def replace_all(text, dict):
 
 def preprocessing(input_file, output_file):
 
+    #---------------------------------------------
+    #   Change symbols to text
+    # ---------------------------------------------
     dic = {":-)": "happy-smiley",
              ":)": "happy-smiley",
              ":-(": "sad-smiley",
              ":(": "sad-smiley"}
 
+    import os
+    temporary_file = os.path.splitext(input_file)[0] + "tmp.csv"
+
     with open(input_file, 'r') as in_file:
         text = in_file.read()
 
-    with open(output_file, 'w') as out_file:
+    with open(temporary_file, 'w') as out_file:
         out_file.write(replace_all(text, dic))
 
-    import pandas as pd
-    df = pd.read_csv(output_file, delimiter=',')
-    df.loc[(df['confidence'] == "NA"), ['confidence']] = 0
+    # ---------------------------------------------
+    #   Change last column name (remove the ".")
+    # ---------------------------------------------
+    import csv
+    with open(temporary_file, 'r') as inFile, open(output_file, 'w', newline='') as outfile:
+        r = csv.reader(inFile)
+        w = csv.writer(outfile)
+        next(r, None)  # skip the first row from the reader, the old header
+        # write new header
+        w.writerow(['tweet', 'existence', 'confidence'])
+        # copy the rest
+        for row in r:
+            w.writerow(row)
 
 
 def print_docs(es_api, index_name, doc_type, num_of_docs_to_print):
@@ -236,25 +251,16 @@ def search(es_api, index_name, doc_type, num_of_docs):
 
 
 #preprocessing(SRC_FILE, INPUT_FILE)
-#exit(0)
 es = Elasticsearch();
-
 delete_index(es, INDEX_NAME)
 #create_analyzer(es, INDEX_NAME, DOC_TYPE)
 create_index_and_mapping(es, INDEX_NAME, DOC_TYPE)
 #delete_content(es, INDEX_NAME);
 update_stop_words(es, INDEX_NAME);
 change_stop_words_to_nltk(es, INDEX_NAME);
-#add_document(es, INDEX_NAME, DOC_TYPE, "tweet1", "yes", 77)
-#add_document(es, INDEX_NAME, DOC_TYPE, "tweet2", "no", 88)
-#add_document(es, INDEX_NAME, DOC_TYPE, "tweet3", "yes", 97)
-#time.sleep(1)
 get_number_of_documents(es, INDEX_NAME, DOC_TYPE);
 #index_csv_file_one_by_one(INPUT_FILE, es, INDEX_NAME, DOC_TYPE)
-
-#index_csv_file_bulk(INPUT_FILE, es, INDEX_NAME, DOC_TYPE);
-index_csv_file_bulk(SRC_FILE, es, INDEX_NAME, DOC_TYPE);
-
+index_csv_file_bulk(INPUT_FILE, es, INDEX_NAME, DOC_TYPE);
 
 time.sleep(1)
 #print_docs(es, INDEX_NAME, DOC_TYPE, 9)
