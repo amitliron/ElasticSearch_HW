@@ -6,6 +6,11 @@ NOTICE: (6.8 vs 7.5)
     3.1  no priorities
     3.2  msearch - less communication overhead and potentially have a higher latency.
     3.3 search thread pool
+    3.4 term vs match:
+        3.4.1 term - exact term. not recommand for text (due to anlysis that may change it)
+        3.4.2 for text, there is a recomondation to use match
+
+
 
 
 TODO:
@@ -266,7 +271,7 @@ def multi_search(es_api, index_name, doc_type, num_of_docs):
     search_arr = []
     # search-1
     search_arr.append({'index': index_name, 'type': doc_type})
-    search_arr.append({"query": {"term": {"text": "warm"}}, 'from': 0, 'size': 2})
+    search_arr.append({"query": {"term": {"confidence": "1"}}})
 
     # search-2
     search_arr.append({'index': index_name, 'type': doc_type})
@@ -276,7 +281,9 @@ def multi_search(es_api, index_name, doc_type, num_of_docs):
     for each in search_arr:
         request += '%s \n' % json.dumps(each)
 
-    res = es.msearch(body=request)
+    res = es_api.msearch(body=request)
+    print("First Query, num of results = ", res['responses'][0]['hits']['total'])
+    print("Second Query, num of results = ", res['responses'][1]['hits']['total'])
     None
 
 

@@ -15,9 +15,9 @@
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="114">
-              <caret line="270" column="14" lean-forward="true" selection-start-line="270" selection-start-column="14" selection-end-line="270" selection-end-column="14" />
+              <caret line="292" column="0" lean-forward="false" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="21" />
               <folding>
-                <element signature="e#534#545#0" expanded="true" />
+                <element signature="e#713#724#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -57,6 +57,7 @@
       <find>stopw</find>
       <find>change_stop_words_to_nltk</find>
       <find>index_csv_file_one_by_one</find>
+      <find>sleep</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -204,9 +205,22 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="37" />
+      <option name="time" value="42" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="res['responses'][0]['hits']['total']" language="Python" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>res['responses'][0]['hits']['total']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.py">
@@ -214,7 +228,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -224,7 +238,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -234,7 +248,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -266,7 +280,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -283,7 +297,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -293,7 +307,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -323,9 +337,9 @@
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
-          <caret line="270" column="14" lean-forward="true" selection-start-line="270" selection-start-column="14" selection-end-line="270" selection-end-column="14" />
+          <caret line="292" column="0" lean-forward="false" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="21" />
           <folding>
-            <element signature="e#534#545#0" expanded="true" />
+            <element signature="e#713#724#0" expanded="true" />
           </folding>
         </state>
       </provider>
