@@ -2,6 +2,10 @@
 NOTICE: (6.8 vs 7.5)
 1. search: timeout vs search_timeout
 2. develop vs production mode (upgrades a number of system startup checks from warnings to exceptions)
+3. search
+    3.1  no priorities
+    3.2  msearch - less communication overhead and potentially have a higher latency.
+    3.3 search thread pool
 
 
 TODO:
@@ -254,6 +258,29 @@ def search(es_api, index_name, doc_type, num_of_docs):
     print("search: num of results: ", res['hits']['total'])
 
 
+def multi_search(es_api, index_name, doc_type, num_of_docs):
+
+    import json
+    print("Multi Search")
+
+    search_arr = []
+    # search-1
+    search_arr.append({'index': index_name, 'type': doc_type})
+    search_arr.append({"query": {"term": {"text": "warm"}}, 'from': 0, 'size': 2})
+
+    # search-2
+    search_arr.append({'index': index_name, 'type': doc_type})
+    search_arr.append({"query": {"match_all": {}}, 'from': 0, 'size': 2})
+
+    request = ''
+    for each in search_arr:
+        request += '%s \n' % json.dumps(each)
+
+    res = es.msearch(body=request)
+    None
+
+
+
 
 #preprocessing(SRC_FILE, INPUT_FILE)
 es = Elasticsearch();
@@ -270,6 +297,7 @@ index_csv_file_bulk(INPUT_FILE, es, INDEX_NAME, DOC_TYPE);
 time.sleep(1)
 #print_docs(es, INDEX_NAME, DOC_TYPE, 9)
 search(es, INDEX_NAME, DOC_TYPE, 10)
+multi_search(es, INDEX_NAME, DOC_TYPE, 10)
 time.sleep(1)
 get_number_of_documents(es, INDEX_NAME, DOC_TYPE);
 print("finished")
