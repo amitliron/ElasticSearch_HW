@@ -1,9 +1,11 @@
 '''
-TODO:
-1. change header from  "existence.confidence" -> "confidence"
-2. change NA under "confidence" to "0"
+NOTICE: (6.8 vs 7.5)
+1. search: timeout vs search_timeout
+2. develop vs production mode (upgrades a number of system startup checks from warnings to exceptions)
 
-bulk - error in csv can be problem
+
+TODO:
+
 '''
 
 
@@ -243,7 +245,10 @@ def search(es_api, index_name, doc_type, num_of_docs):
                     }
                 }
             }
-        }
+        },
+        "timeout": "30s",
+        "from": 1,
+        "size": 10
     }
     res = es_api.search(index=index_name, body=body)
     print("search: num of results: ", res['hits']['total'])
