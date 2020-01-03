@@ -10,7 +10,8 @@ NOTICE: (6.8 vs 7.5)
         3.4.1 term - exact term. not recommand for text (due to anlysis that may change it)
         3.4.2 for text, there is a recomondation to use match
 
-
+4. add/update/bulk:
+    4.1 use refresh = truee (otherwise different results (rls vs dbg)
 
 
 TODO:
@@ -175,7 +176,7 @@ def index_csv_file_bulk(file_path, es_api, index_name, doc_type):
     print("index_csv_file_bulk")
     with open(file_path) as f:
         reader = csv.DictReader(f)
-        helpers.bulk(es_api, reader, index=index_name, doc_type=doc_type, raise_on_error=False)
+        helpers.bulk(es_api, reader, index=index_name, doc_type=doc_type, raise_on_error=False, refresh=True)
 
 def replace_all(text, dict):
     for emoticon_text, emoticon in dict.items():
@@ -282,8 +283,15 @@ def multi_search(es_api, index_name, doc_type, num_of_docs):
         request += '%s \n' % json.dumps(each)
 
     res = es_api.msearch(body=request)
-    print("First Query, num of results = ", res['responses'][0]['hits']['total'])
-    print("Second Query, num of results = ", res['responses'][1]['hits']['total'])
+
+    print("First Query, num of results = ", res['responses'][0]['hits']['total'],
+          " shards = ",  res['responses'][0]['_shards']['total'],
+          " num of succ shards = ",  res['responses'][0]['_shards']['successful'])
+
+    print("Second Query, num of results = ", res['responses'][1]['hits']['total'],
+          " shards = ", res['responses'][1]['_shards']['total'],
+          " num of succ shards = ", res['responses'][1]['_shards']['successful'])
+
     None
 
 
