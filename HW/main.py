@@ -12,6 +12,9 @@ NOTICE: (6.8 vs 7.5)
 
 4. add/update/bulk:
     4.1 use refresh = truee (otherwise different results (rls vs dbg)
+5. mapping:
+    5.1 keyword - not analyzed (keeps as one large string and not distinct words as text fields)
+                - it can be aggregated on, and you can use wildcard searches on.
 
 
 TODO:
@@ -57,7 +60,7 @@ def create_analyzer(es_api, index_name, doc_type):
             doc_type: {
                 "properties": {
                     "tweet": {"type": "text", "fielddata": "true"},
-                    "existence": {"type": "text"},
+                    "existence": {"type": "keyword"},
                     "confidence": {"type": "float"}
                 }
             }}
@@ -72,7 +75,7 @@ def create_index_and_mapping(es_api, index_name, doc_type):
             DOC_TYPE: {
                 "properties": {
                     "tweet": {"type": "text", "fielddata": "true"},
-                    "existence": {"type": "text"},
+                    "existence": {"type": "keyword"},
                     "confidence": {"type": "float"}
                 }
             }
@@ -174,7 +177,7 @@ def index_csv_file_bulk(file_path, es_api, index_name, doc_type):
     import csv
     from elasticsearch import helpers
     print("index_csv_file_bulk")
-    with open(file_path) as f:
+    with open(file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         helpers.bulk(es_api, reader, index=index_name, doc_type=doc_type, raise_on_error=False, refresh=True)
 
@@ -183,6 +186,30 @@ def replace_all(text, dict):
         text = text.replace(emoticon_text, emoticon)
         #text = text.replace(emoticon, emoticon_text)
     return text
+
+
+def preprocessing_with_panda(input_file, output_file):
+    import pandas as pd
+    import re
+
+    df = pd.read_csv(input_file, error_bad_lines=False, engine='python')
+    df.columns = ['tweet', 'existence', 'confidence']
+
+    existence_column = df['existence']
+    confidence_column = df['confidence']
+    existence_column.fillna("None", inplace=True)
+    confidence_column.fillna("0", inplace=True)
+
+    dic = {":-)": "happy-smiley",
+           ":)": "happy-smiley",
+           ":-(": "sad-smiley",
+           ":(": "sad-smiley"}
+
+    # add backslash to string for feeding it to regex as pattern. Return the new string.
+    dic = {re.escape(k): v for k, v in dic.items()}
+    df.replace({'tweet': dic}, inplace=True, regex=True)
+    df.to_csv(output_file, index=False)
+    None
 
 def preprocessing(input_file, output_file):
 
@@ -298,6 +325,7 @@ def multi_search(es_api, index_name, doc_type, num_of_docs):
 
 
 #preprocessing(SRC_FILE, INPUT_FILE)
+preprocessing_with_panda(SRC_FILE, INPUT_FILE)
 es = Elasticsearch();
 delete_index(es, INDEX_NAME)
 #create_analyzer(es, INDEX_NAME, DOC_TYPE)
@@ -307,12 +335,10 @@ update_stop_words(es, INDEX_NAME);
 change_stop_words_to_nltk(es, INDEX_NAME);
 get_number_of_documents(es, INDEX_NAME, DOC_TYPE);
 #index_csv_file_one_by_one(INPUT_FILE, es, INDEX_NAME, DOC_TYPE)
-index_csv_file_bulk(INPUT_FILE, es, INDEX_NAME, DOC_TYPE);
 
-time.sleep(1)
+index_csv_file_bulk(INPUT_FILE, es, INDEX_NAME, DOC_TYPE);
 #print_docs(es, INDEX_NAME, DOC_TYPE, 9)
 search(es, INDEX_NAME, DOC_TYPE, 10)
 multi_search(es, INDEX_NAME, DOC_TYPE, 10)
-time.sleep(1)
 get_number_of_documents(es, INDEX_NAME, DOC_TYPE);
 print("finished")
